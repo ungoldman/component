@@ -12,7 +12,7 @@ $ npm install @ungoldman/component
 
 ## Usage
 
-See [example.js][example.js].
+See [example.js](example.js).
 
 ## API
 
