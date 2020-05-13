@@ -21,7 +21,6 @@
   },
   "devDependencies": {
     "@tap-format/spec": "^0.2.0",
-    "bankai": "^9.5.1",
     "browserify": "^16.0.0",
     "choo": "^7.1.0",
     "choo-log": "^8.0.0",
@@ -59,7 +58,6 @@
     "url": "git+https://github.com/ungoldman/component.git"
   },
   "scripts": {
-    "start": "bankai start example",
     "test": "run-s test:*",
     "test:browser": "browserify test/browser/index.js | tape-run --render='tap-format-spec'",
     "test:deps": "dependency-check . --no-dev -i nanoassert",
