@@ -1,50 +1,22 @@
 {
-  "name": "nanocomponent",
+  "name": "@ungoldman/nanocomponent",
+  "description": "experimental nanocomponent fork",
   "version": "6.5.3",
-  "description": "Native DOM components that pair nicely with DOM diffing algorithms",
-  "main": "index.js",
+  "author": "Trainspotters",
   "browser": {
     "assert": "nanoassert"
   },
-  "scripts": {
-    "test": "run-s test:*",
-    "test:deps": "dependency-check . --no-dev -i nanoassert",
-    "test:node": "NODE_ENV=test node test/node.js | tap-format-spec",
-    "test:browser": "browserify test/browser/index.js | tape-run --render='tap-format-spec'",
-    "test:lint": "standard *.js",
-    "start": "bankai start example"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/choojs/nanocomponent.git"
-  },
-  "keywords": [
-    "nanohtml",
-    "bel",
-    "choo",
-    "element",
-    "thunk",
-    "cache",
-    "perf",
-    "nanomorph",
-    "morphdom",
-    "nanocomponent",
-    "cache-component"
-  ],
-  "author": "Trainspotters",
-  "contributors": [
-    "Bret Comnes <bcomnes@gmail.com> (http://bret.io)"
-  ],
-  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/choojs/nanocomponent/issues"
+    "url": "https://github.com/ungoldman/nanocomponent/issues"
   },
-  "homepage": "https://github.com/choojs/nanocomponent#readme",
+  "contributors": [
+    "Bret Comnes <bcomnes@gmail.com> (http://bret.io)",
+    "Nate Goldman <ungoldman@gmail.com> (https://ungoldman.com)"
+  ],
   "dependencies": {
     "global": "^4.3.1",
     "nanoassert": "^2.0.0",
     "nanomorph": "^5.1.2",
-    "nanotiming": "^7.2.0",
     "on-load": "^4.0.2"
   },
   "devDependencies": {
@@ -65,5 +37,33 @@
     "standard": "^14.3.4",
     "tape": "^5.0.0",
     "tape-run": "^7.0.0"
+  },
+  "homepage": "https://github.com/ungoldman/nanocomponent#readme",
+  "keywords": [
+    "bel",
+    "cache",
+    "cache-component",
+    "choo",
+    "element",
+    "morphdom",
+    "nanocomponent",
+    "nanohtml",
+    "nanomorph",
+    "perf",
+    "thunk"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ungoldman/nanocomponent.git"
+  },
+  "scripts": {
+    "start": "bankai start example",
+    "test": "run-s test:*",
+    "test:browser": "browserify test/browser/index.js | tape-run --render='tap-format-spec'",
+    "test:deps": "dependency-check . --no-dev -i nanoassert",
+    "test:lint": "standard *.js",
+    "test:node": "NODE_ENV=test node test/node.js | tap-format-spec"
   }
 }
