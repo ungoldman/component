@@ -2,6 +2,8 @@
 
 ⚠️ fork in progress ⚠️
 
+experimental, no support intended. may disappear at any moment.
+
 ## Install
 
 ```sh
@@ -11,9 +13,13 @@ $ npm install @ungoldman/component
 ## Usage
 
 ```js
-// button.js
-var Component = require('@ungoldman/component')
-var html = require('nanohtml')
+const choo = require('choo')
+const html = require('nanohtml')
+const Component = require('.')
+
+function randomColor () {
+  return '#' + ('000000' + Math.floor(Math.random() * 16777215).toString(16)).slice(-6)
+}
 
 class Button extends Component {
   constructor () {
@@ -21,10 +27,15 @@ class Button extends Component {
     this.color = null
   }
 
-  createElement (color) {
+  createElement (color, emit) {
     this.color = color
+
+    function onclick () {
+      emit('color', randomColor())
+    }
+
     return html`
-      <button style="background-color: ${color}">
+      <button style="background-color: ${color}" onclick=${onclick}>
         Click Me
       </button>
     `
@@ -36,31 +47,26 @@ class Button extends Component {
   }
 }
 
-module.exports = Button
-```
+const button = new Button()
 
-```js
-// index.js
-var choo = require('choo')
-var html = require('nanohtml')
+function mainView (state, emit) {
+  return html`<body>${button.render(state.color, emit)}</body>`
+}
 
-var Button = require('./button.js')
-var button = new Button()
+const app = choo()
 
-var app = choo()
 app.route('/', mainView)
 app.mount('body')
 
-function mainView (state, emit) {
-  return html`
-    <body>
-      ${button.render(state.color)}
-    </body>
-  `
-}
-
 app.use(function (state, emitter) {
-  state.color = 'green'
+  state.color = 'white'
+
+  emitter.on('color', color => {
+    state.color = color
+    emitter.emit('render')
+  })
+})
+color = 'green'
 })
 ```
 
