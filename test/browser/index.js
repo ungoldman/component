@@ -30,7 +30,7 @@ test('can create a simple component', function (t) {
   // Update mounted component and inspect proxy
   var proxy = comp.render({ color: 'red' })
   t.ok(proxy.dataset.proxy != null, 'proxy is returned on mounted component')
-  t.equal(proxy.dataset.component, comp._cID, 'proxy is tagged with the correct cID')
+  t.equal(proxy.dataset.cid, comp._cID, 'proxy is tagged with the correct cID')
   t.equal(proxy.nodeName, comp.element.nodeName, 'proxy is of same type')
   t.ok(proxy.isSameNode(comp.element), 'isSameNode works')
   t.ok(comp.element, 'component is still mounted in page')

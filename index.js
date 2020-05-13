@@ -110,7 +110,7 @@ class Component {
     const el = document.getElementById(this._id)
 
     if (el) {
-      return el.dataset.component === this._cID ? el : undefined
+      return el.dataset.cid === this._cID ? el : undefined
     }
   }
 
@@ -140,7 +140,7 @@ class Component {
     proxy.id = this._id
     proxy.setAttribute('data-proxy', '')
     proxy.isSameNode = function (el) {
-      return el && el.dataset.component === self._cID
+      return el && el.dataset.cid === self._cID
     }
 
     return proxy
@@ -155,7 +155,7 @@ class Component {
   }
 
   _brandNode (node) {
-    node.setAttribute('data-component', this._cID)
+    node.setAttribute('data-cid', this._cID)
 
     if (this._olID) {
       node.setAttribute(OL_ATTR_ID, this._olID)
