@@ -2,14 +2,16 @@ var Component = require('../../')
 var html = require('nanohtml')
 
 class SimpleComponent extends Component {
-  constructor (name) {
+  constructor () {
     super()
-    this.name = name
-    this.color = null
+    this.color = 'blue'
+    this.name = 'yosh'
   }
 
-  createElement (color) {
-    this.color = color || 'blue'
+  createElement (props) {
+    this.color = props.color || this.color
+    this.name = props.name || this.name
+
     return html`
       <div>
         <p class="name">${this.name}</p>
@@ -18,8 +20,8 @@ class SimpleComponent extends Component {
     `
   }
 
-  update (color) {
-    return this.color !== color
+  update (nextProps, lastProps) {
+    return nextProps.color !== lastProps.color
   }
 }
 

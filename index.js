@@ -2,6 +2,7 @@ const document = require('global/document')
 const morph = require('nanomorph')
 const onload = require('on-load')
 const assert = require('assert')
+const autoBind = require('auto-bind')
 
 const OL_KEY_ID = onload.KEY_ID
 const OL_ATTR_ID = onload.KEY_ATTR
@@ -11,7 +12,7 @@ function makeID () {
 }
 
 class Component {
-  constructor () {
+  constructor (emit) {
     this._hasWindow = typeof window !== 'undefined'
     this._id = null // represents the id of the root node
     this._cID = null // internal component id
@@ -20,11 +21,12 @@ class Component {
     this._loaded = false // Used to debounce on-load when child-reordering
     this._rootNodeName = null
     this._rerender = false
+    this._lastArgs = {}
 
-    this._handleLoad = this._handleLoad.bind(this)
-    this._handleUnload = this._handleUnload.bind(this)
+    if (emit) this.emit = emit
 
-    this._arguments = []
+    // just always bind everything to the instance ffs
+    autoBind(this, { exclude: ['emit'] })
   }
 
   // public methods
@@ -37,9 +39,15 @@ class Component {
     return true
   }
 
-  render () {
+  render (props = {}, children = null) {
+    assert(typeof props === 'object', 'props must be an object')
+    assert(props.children == null, 'props.children is a reserved property')
+
     const self = this
-    const args = new Array(arguments.length)
+    const args = props
+
+    if (children) args.children = children
+
     let el
 
     for (let i = 0; i < arguments.length; i++) {
@@ -47,14 +55,14 @@ class Component {
     }
 
     if (!this._hasWindow) {
-      el = this.createElement.apply(this, args)
+      el = this.createElement(args)
       return el
     }
 
     if (this.element) {
       el = this.element // retain reference, as the ID might change on render
 
-      const shouldUpdate = this._rerender || this.update.apply(this, args)
+      const shouldUpdate = this._rerender || this.update(args, this._lastArgs)
 
       if (this._rerender) {
         this._rerender = false
@@ -80,6 +88,7 @@ class Component {
     el = this._handleRender(args)
 
     if (this.beforerender) this.beforerender(el)
+
     if (this.load || this.unload || this.afterreorder) {
       onload(el, self._handleLoad, self._handleUnload, self._cID)
       this._olID = el.dataset[OL_KEY_ID]
@@ -92,7 +101,7 @@ class Component {
     assert(this.element, 'component: can\'t rerender on an unmounted dom node')
 
     this._rerender = true
-    this.render.apply(this, this._arguments)
+    this.render(this._lastArgs)
   }
 
   // getters
@@ -108,7 +117,7 @@ class Component {
   // private methods
 
   _handleRender (args) {
-    const el = this.createElement.apply(this, args)
+    const el = this.createElement(args)
 
     if (!this._rootNodeName) {
       this._rootNodeName = el.nodeName
@@ -117,7 +126,7 @@ class Component {
     assert(el instanceof window.Element, 'component: createElement should return a single DOM node')
     assert(this._rootNodeName === el.nodeName, 'component: root node types cannot differ between re-renders')
 
-    this._arguments = args
+    this._lastArgs = args
 
     return this._brandNode(this._ensureID(el))
   }

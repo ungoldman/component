@@ -2,21 +2,17 @@ var Component = require('../../')
 var html = require('nanohtml')
 
 class BlogSection extends Component {
-  constructor (name = 'BlogSection') {
-    super(name)
-    this.entries = null
-  }
-
-  createElement (entries) {
-    this.entries = entries
+  createElement (props) {
+    this.entries = props.entries || null
     return html`
       <section>
-        ${entries && entries.length > 0 ? entries.map(e => html`<p>${e}</p>`) : 'No entries'}
+        ${this.entries && this.entries.length > 0 ? this.entries.map(e => html`<p>${e}</p>`) : 'No entries'}
       </section>
     `
   }
 
-  update (entries) {
+  update (nextProps, lastProps) {
+    const { entries } = nextProps
     if (entries !== this.entries || this.entries.some((e, i) => e !== entries[i])) return true
     return false
   }

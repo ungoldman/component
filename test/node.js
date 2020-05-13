@@ -12,8 +12,8 @@ test('should render elements', (t) => {
   t.plan(2)
 
   class MyComp extends Component {
-    createElement (name) {
-      return html`<div>${name}</div>`
+    createElement (props) {
+      return html`<div>${props.name}</div>`
     }
 
     update () {
@@ -23,9 +23,9 @@ test('should render elements', (t) => {
 
   var myComp = new MyComp()
 
-  var el1 = myComp.render('mittens')
+  var el1 = myComp.render({ name: 'mittens' })
   t.equal(String(el1), '<div>mittens</div>', 'init render success')
 
-  var el3 = myComp.render('scruffles')
+  var el3 = myComp.render({ name: 'scruffles' })
   t.equal(String(el3), '<div>scruffles</div>', 're-render success')
 })

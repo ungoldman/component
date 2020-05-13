@@ -5,16 +5,6 @@ var Component = require('../../')
 var html = require('nanohtml')
 var nanobus = require('nanobus')
 
-function compare (array1, array2) {
-  var length = array1.length
-  if (length !== array2.length) return true
-
-  for (var i = 0; i < length; i++) {
-    if (array1[i] !== array2[i]) return true
-  }
-  return false
-}
-
 function makeID () {
   return 'testid-' + Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
 }
@@ -30,15 +20,15 @@ test('can create a simple component', function (t) {
   var testRoot = createTestElement()
 
   // Create instance and mount
-  var comp = new SimpleComponent('yosh')
-  testRoot.appendChild(comp.render('green'))
+  var comp = new SimpleComponent()
+  testRoot.appendChild(comp.render({ color: 'green' }))
   t.ok(comp.element, 'component created and mounted in page')
-  t.equal(comp.element.querySelector('.name').innerText, 'yosh', 'instance options correctly rendered')
+  t.equal(comp.element.querySelector('.name').innerText, 'yosh', 'default options correctly rendered')
   t.equal(comp.element.querySelector('.color').innerText, 'green', 'arguments correctly rendered')
   t.equal(comp.element.dataset.proxy, undefined, 'not a proxy element')
 
   // Update mounted component and inspect proxy
-  var proxy = comp.render('red')
+  var proxy = comp.render({ color: 'red' })
   t.ok(proxy.dataset.proxy != null, 'proxy is returned on mounted component')
   t.equal(proxy.dataset.component, comp._cID, 'proxy is tagged with the correct cID')
   t.equal(proxy.nodeName, comp.element.nodeName, 'proxy is of same type')
@@ -47,7 +37,7 @@ test('can create a simple component', function (t) {
   t.equal(comp.element.querySelector('.color').innerText, 'red', 'arguments correctly rendered')
   t.equal(comp.element.dataset.proxy, undefined, 'mounted node isn\'t a proxy')
 
-  comp.render('red')
+  comp.render({ color: 'red' })
   t.ok(comp.element, 'component is still mounted in page')
   t.equal(comp.element.querySelector('.color').innerText, 'red', 'arguments correctly rendered')
   t.equal(comp.element.dataset.proxy, undefined, 'mounted node isn\'t a proxy')
@@ -65,12 +55,12 @@ test('can create a simple component', function (t) {
 test('proxy node types match the root node returned from createElement', function (t) {
   var testRoot = createTestElement()
   var comp = new BlogSection()
-  testRoot.appendChild(comp.render(['hey', 'hi', 'howdy']))
+  testRoot.appendChild(comp.render({ entries: ['hey', 'hi', 'howdy'] }))
   t.ok(comp.element, 'component created and mounted in page')
   t.equal(comp.element.nodeName, 'SECTION', 'correctly rendered')
   t.equal(comp.element.dataset.proxy, undefined, 'not a proxy element')
 
-  var proxy = comp.render(['by', 'bye', 'cya'])
+  var proxy = comp.render({ entries: ['by', 'bye', 'cya'] })
   t.equal(proxy.nodeName, comp.element.nodeName, 'proxy is of same type as the root node of createElement')
 
   t.end()
@@ -100,14 +90,14 @@ test('lifecycle tests', function (t) {
       }
     }
 
-    createElement (text) {
-      this.arguments = arguments
+    createElement (props) {
+      this.__testProps = props
       this.testState['create-element']++
-      return html`<div>${text}</div>`
+      return html`<div>${props.text}</div>`
     }
 
-    update (text) {
-      var shouldUpdate = compare(this.arguments, arguments)
+    update (nextProps, lastProps) {
+      const shouldUpdate = nextProps.text !== lastProps.text
       this.testState.update++
       return shouldUpdate
     }
@@ -143,7 +133,9 @@ test('lifecycle tests', function (t) {
     load: 0,
     unload: 0
   }, 'no lifecycle methods run on instantiation')
-  var el = comp.render('hey')
+
+  var el = comp.render({ text: 'hey' })
+
   t.deepEqual(comp.testState, {
     'create-element': 1,
     update: 0,
@@ -165,7 +157,7 @@ test('lifecycle tests', function (t) {
       unload: 0
     }, 'component loaded')
 
-    comp.render('hi')
+    comp.render({ text: 'hi' })
 
     t.deepEqual(comp.testState, {
       'create-element': 2,
@@ -176,7 +168,7 @@ test('lifecycle tests', function (t) {
       unload: 0
     }, 'component re-rendered')
 
-    comp.render('hi')
+    comp.render({ text: 'hi' })
 
     t.deepEqual(comp.testState, {
       'create-element': 2,

@@ -72,9 +72,9 @@ color = 'green'
 
 ## API
 
-### `component = new Component([name])`
+### `component = new Component([emit])`
 
-Create a new Component instance. Additional methods can be set on the prototype.
+Create a new Component instance. Optionally pass an emit function.
 
 ### `component.render([arguments…])`
 

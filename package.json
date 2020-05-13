@@ -14,6 +14,7 @@
     "Nate Goldman <ungoldman@gmail.com> (https://ungoldman.com)"
   ],
   "dependencies": {
+    "auto-bind": "^4.0.0",
     "global": "^4.3.1",
     "nanoassert": "^2.0.0",
     "nanomorph": "^5.1.2",
@@ -47,7 +48,7 @@
     "test": "run-s test:*",
     "test:browser": "browserify test/browser/index.js | tape-run --render='tap-format-spec'",
     "test:deps": "dependency-check . --no-dev -i nanoassert",
-    "test:lint": "standard *.js",
+    "test:lint": "standard",
     "test:node": "NODE_ENV=test node test/node.js | tap-format-spec"
   }
 }
