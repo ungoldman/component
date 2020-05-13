@@ -76,14 +76,18 @@ color = 'green'
 
 Create a new Component instance. Optionally pass an emit function.
 
-### `component.render([arguments…])`
+### `component.render([props,] [children])`
 
-Render the component. Returns a proxy node if already mounted on the DOM. Proxy
-nodes make it so DOM diffing algorithms leave the element alone when diffing. Call this when `arguments` have changed.
+Render the component. Returns a proxy node if already mounted on the DOM.
+Proxy nodes make it so DOM diffing algorithms leave the element alone when diffing.
+Call this when `props` or `children` have changed.
 
 ### `component.rerender()`
 
-Re-run `.render` using the last `arguments` that were passed to the `render` call. Useful for triggering component renders if internal state has changed. Arguments are automatically cached under `this._arguments` (🖐 hands off, buster! 🖐). The `update` method is bypassed on re-render.
+Re-run `.render` using the last arguments that were passed to the `render` call.
+Useful for triggering component renders if internal state has changed.
+Arguments are automatically cached under `this._lastArgs` (🖐 hands off, buster! 🖐).
+The `update` method is bypassed on re-render.
 
 ### `component.element`
 
@@ -91,22 +95,22 @@ A [getter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Fun
 property that returns the component's DOM node if its mounted in the page and
 `null` when its not.
 
-### `DOMNode = Component.prototype.createElement([arguments…])`
+### `Component.prototype.createElement([props]) => DOMNode`
 
 __Must be implemented.__ Component specific render function.
 Optionally cache argument values here.
 Run anything here that needs to run alongside node rendering.
 Must return a DOMNode.
 Use `beforerender` to run code after `createElement` when the component is unmounted.
-Arguments passed to `render` are passed to `createElement`.
+Arguments passed to `render` are passed to `createElement` (`children` is attached to `props` for convenience).
 Elements returned from `createElement` must always return the same root node type.
 
-### `Boolean = Component.prototype.update([arguments…])`
+### `Component.prototype.update(nextProps, lastProps) => Boolean`
 
 Return a boolean to determine if `prototype.createElement()` should be called.
 The `update` method is analogous to React's `shouldComponentUpdate`.
 Called only when the component is mounted in the DOM tree.
-Arguments passed to `render` are passed to `update`.
+Arguments passed to `render` are passed to `update` (`children` is attached to `props` for convenience).
 Defaults to always returning `true`.
 
 ### `Component.prototype.beforerender(el)`
