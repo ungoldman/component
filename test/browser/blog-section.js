@@ -1,7 +1,7 @@
-var Nanocomponent = require('../../')
+var Component = require('../../')
 var html = require('nanohtml')
 
-class BlogSection extends Nanocomponent {
+class BlogSection extends Component {
   constructor (name = 'BlogSection') {
     super(name)
     this.entries = null

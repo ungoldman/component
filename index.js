@@ -7,14 +7,14 @@ const OL_KEY_ID = onload.KEY_ID
 const OL_ATTR_ID = onload.KEY_ATTR
 
 function makeID () {
-  return 'ncid-' + Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
+  return 'cid-' + Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
 }
 
-class Nanocomponent {
+class Component {
   constructor () {
     this._hasWindow = typeof window !== 'undefined'
     this._id = null // represents the id of the root node
-    this._ncID = null // internal nanocomponent id
+    this._cID = null // internal component id
     this._olID = null
     this._proxy = null
     this._loaded = false // Used to debounce on-load when child-reordering
@@ -30,7 +30,7 @@ class Nanocomponent {
   // public methods
 
   createElement () {
-    throw new Error('nanocomponent: createElement should be implemented!')
+    throw new Error('component: createElement should be implemented!')
   }
 
   update () {
@@ -81,7 +81,7 @@ class Nanocomponent {
 
     if (this.beforerender) this.beforerender(el)
     if (this.load || this.unload || this.afterreorder) {
-      onload(el, self._handleLoad, self._handleUnload, self._ncID)
+      onload(el, self._handleLoad, self._handleUnload, self._cID)
       this._olID = el.dataset[OL_KEY_ID]
     }
 
@@ -89,7 +89,7 @@ class Nanocomponent {
   }
 
   rerender () {
-    assert(this.element, 'nanocomponent: cant rerender on an unmounted dom node')
+    assert(this.element, 'component: can\'t rerender on an unmounted dom node')
 
     this._rerender = true
     this.render.apply(this, this._arguments)
@@ -101,7 +101,7 @@ class Nanocomponent {
     const el = document.getElementById(this._id)
 
     if (el) {
-      return el.dataset.nanocomponent === this._ncID ? el : undefined
+      return el.dataset.component === this._cID ? el : undefined
     }
   }
 
@@ -114,8 +114,8 @@ class Nanocomponent {
       this._rootNodeName = el.nodeName
     }
 
-    assert(el instanceof window.Element, 'nanocomponent: createElement should return a single DOM node')
-    assert(this._rootNodeName === el.nodeName, 'nanocomponent: root node types cannot differ between re-renders')
+    assert(el instanceof window.Element, 'component: createElement should return a single DOM node')
+    assert(this._rootNodeName === el.nodeName, 'component: root node types cannot differ between re-renders')
 
     this._arguments = args
 
@@ -131,14 +131,14 @@ class Nanocomponent {
     proxy.id = this._id
     proxy.setAttribute('data-proxy', '')
     proxy.isSameNode = function (el) {
-      return el && el.dataset.nanocomponent === self._ncID
+      return el && el.dataset.component === self._cID
     }
 
     return proxy
   }
 
   _reset () {
-    this._ncID = makeID()
+    this._cID = makeID()
     this._olID = null
     this._id = null
     this._proxy = null
@@ -146,7 +146,7 @@ class Nanocomponent {
   }
 
   _brandNode (node) {
-    node.setAttribute('data-nanocomponent', this._ncID)
+    node.setAttribute('data-component', this._cID)
 
     if (this._olID) {
       node.setAttribute(OL_ATTR_ID, this._olID)
@@ -159,7 +159,7 @@ class Nanocomponent {
     if (node.id) {
       this._id = node.id
     } else {
-      node.id = this._id = this._ncID
+      node.id = this._id = this._cID
     }
 
     // Update proxy node ID if it changed
@@ -190,4 +190,4 @@ class Nanocomponent {
   }
 }
 
-module.exports = Nanocomponent
+module.exports = Component

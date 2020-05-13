@@ -1,28 +1,24 @@
-var Nanocomponent = require('../')
+var Component = require('../')
 var test = require('tape')
 var html = require('nanohtml')
 
 test('should validate input types', (t) => {
   t.plan(1)
-  var comp = new Nanocomponent()
+  var comp = new Component()
   t.throws(comp.render.bind(comp), /createElement should be implemented/)
 })
 
 test('should render elements', (t) => {
   t.plan(2)
 
-  function MyComp () {
-    if (!(this instanceof MyComp)) return new MyComp()
-    Nanocomponent.call(this)
-  }
-  MyComp.prototype = Object.create(Nanocomponent.prototype)
+  class MyComp extends Component {
+    createElement (name) {
+      return html`<div>${name}</div>`
+    }
 
-  MyComp.prototype.createElement = function (name) {
-    return html`<div>${name}</div>`
-  }
-
-  MyComp.prototype.update = function (name) {
-    return false
+    update () {
+      return false
+    }
   }
 
   var myComp = new MyComp()
